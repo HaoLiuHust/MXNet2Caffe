@@ -4,14 +4,10 @@ import mxnet as mx
 import caffe
 
 parser = argparse.ArgumentParser(description='Convert MXNet model to Caffe model')
-#parser.add_argument('--mx-model',    type=str, default='../mx-model/old1/onetnew3')
-#parser.add_argument('--mx-epoch',    type=int, default=52)
-#parser.add_argument('--cf-prototxt', type=str, default='../mx-model/old1/onetnew3.prototxt')
-#parser.add_argument('--cf-model',    type=str, default='../mx-model/old1/onetnew3.caffemodel')
-parser.add_argument('--mx-model',    type=str, default='../mx-model/model-r34-amf/model')
+parser.add_argument('--mx-model',    type=str, default='../model-r50-am-lfw/model')
 parser.add_argument('--mx-epoch',    type=int, default=0)
-parser.add_argument('--cf-prototxt', type=str, default='../mx-model/model-r34-amf/model.prototxt')
-parser.add_argument('--cf-model',    type=str, default='../mx-model/model-r34-amf/model.caffemodel')
+parser.add_argument('--cf-prototxt', type=str, default='../model-r50-am-lfw/model.prototxt')
+parser.add_argument('--cf-model',    type=str, default='../model-r50-am-lfw/model.caffemodel')
 args = parser.parse_args()
 
 # ------------------------------------------
