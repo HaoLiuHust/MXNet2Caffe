@@ -96,7 +96,11 @@ def Activation(txt_file, info):
   txt_file.write('  bottom: "%s"\n'       % info['bottom'][0])
   txt_file.write('  top: "%s"\n'          % info['top'])
   txt_file.write('  name: "%s"\n'         % info['top'])
-  txt_file.write('  type: "ReLU"\n')      # TODO
+  if info[attrstr]['act_type']=='sigmoid':
+    txt_file.write('  type: "Sigmoid"\n')      # TODO
+  else:
+    txt_file.write('  type: "ReLu"\n')  # TODO
+
   txt_file.write('}\n')
   txt_file.write('\n')
   pass
@@ -133,10 +137,19 @@ def Pooling(txt_file, info):
   txt_file.write('  type: "Pooling"\n')
   txt_file.write('  pooling_param {\n')
   txt_file.write('    pool: %s\n'         % pool_type)       # TODO
-  txt_file.write('    kernel_size: %s\n'  % info[attrstr]['kernel'].split('(')[1].split(',')[0])
-  txt_file.write('    stride: %s\n'       % info[attrstr]['stride'].split('(')[1].split(',')[0])
-  if info[attrstr].has_key('pad'):
-    txt_file.write('    pad: %s\n'          % info[attrstr]['pad'].split('(')[1].split(',')[0])
+  if info[attrstr].has_key("global_pool") and info[attrstr]['global_pool']=="True":
+    txt_file.write('    global_pooling: true\n')
+  else:
+    txt_file.write('    kernel_size: %s\n'  % info[attrstr]['kernel'].split('(')[1].split(',')[0])
+    if info[attrstr].has_key('stride'):
+      txt_file.write('    stride: %s\n'       % info[attrstr]['stride'].split('(')[1].split(',')[0])
+    else:
+      txt_file.write('    stride: 1\n')
+    if info[attrstr].has_key('pad'):
+      txt_file.write('    pad: %s\n'          % info[attrstr]['pad'].split('(')[1].split(',')[0])
+    else:
+      txt_file.write('    pad: 1\n')
+
   txt_file.write('  }\n')
   txt_file.write('}\n')
   txt_file.write('\n')
@@ -194,6 +207,34 @@ def Eltwise(txt_file, info, op):
   txt_file.write('}\n')
   txt_file.write('\n')  
 
+def BroadCast_Mul(txt_file,info):
+  txt_file.write('layer {\n')
+  txt_file.write('  type: "Reduction"\n')
+  txt_file.write('  top: "%s_reduction"\n' % info['bottom'][1])
+  txt_file.write('  name: "%s_reduction"\n' % info['bottom'][1])
+  txt_file.write('  bottom: "%s"\n' % info['bottom'][1])
+
+  txt_file.write('  reduction_param {\n')
+  txt_file.write('  axis: 2\n')
+  txt_file.write('  operation: SUM\n')
+  txt_file.write('}\n')
+  txt_file.write('}\n')
+  txt_file.write('\n')
+
+  txt_file.write('layer {\n')
+  txt_file.write('  type: "Scale"\n')
+  txt_file.write('  top: "%s"\n' % info['top'])
+  txt_file.write('  name: "%s"\n' % info['top'])
+  txt_file.write('  bottom: "%s"\n' % info['bottom'][0])
+  txt_file.write('  bottom: "%s_reduction"\n' % info['bottom'][1])
+  txt_file.write('  scale_param {\n')
+  txt_file.write('  axis: 0\n')
+  txt_file.write('  bias_term: false\n')
+  txt_file.write('}\n')
+  txt_file.write('}\n')
+  txt_file.write('\n')
+
+
 # ----------------------------------------------------------------
 def write_node(txt_file, info):
     if 'label' in info['name']:
@@ -226,10 +267,12 @@ def write_node(txt_file, info):
         LeakyReLU(txt_file, info)
     elif info['op'] == 'elemwise_add':
         ElementWiseSum(txt_file, info)
+    elif info['op'] == 'broadcast_mul':
+        BroadCast_Mul(txt_file,info)
     else:
         #pprint.pprint(info)
         #sys.exit("Warning!  Unknown mxnet op:{}".format(info['op']))
-        print "Warning! Skip Unknown mxnet op:{}".format(info['op'])
+        print("Warning! Skip Unknown mxnet op:{}".format(info['op']))
 
 
 
