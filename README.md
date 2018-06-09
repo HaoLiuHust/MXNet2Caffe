@@ -1,5 +1,5 @@
-* duringing convert mxnet SE-Resnet model to caffe , I modify the script to solve my problom, maybe is useful to others  
-* main change: add support to Sigmoid activation, broadcast_mul..
+* Duringing convert mxnet SE-Resnet model to caffe , I encounted several problom, and by modified some script I solved my problems, maybe it's useful to others  
+* Main change: add support to Sigmoid activation, broadcast_mul..
 # MXNet2Caffe: Convert MXNet model to Caffe model
 
 You are welcome to file issues either for bugs in the source code, feature requests!
