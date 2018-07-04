@@ -125,7 +125,7 @@ def Activation(txt_file, info):
   if info[attrstr]['act_type']=='sigmoid':
     txt_file.write('  type: "Sigmoid"\n')      # TODO
   else:
-    txt_file.write('  type: "ReLu"\n')  # TODO
+    txt_file.write('  type: "ReLU"\n')  # TODO
 
   txt_file.write('}\n')
   txt_file.write('\n')
