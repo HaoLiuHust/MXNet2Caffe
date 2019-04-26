@@ -4,14 +4,14 @@ import pprint
 
 attrstr = "attrs"
 
-def data(txt_file, info):
+def data(txt_file, info,data_shape):
   txt_file.write('name: "mxnet-mdoel"\n')
   txt_file.write('layer {\n')
   txt_file.write('  name: "data"\n')
   txt_file.write('  type: "Input"\n')
   txt_file.write('  top: "data"\n')
   txt_file.write('  input_param {\n')
-  txt_file.write('    shape: { dim: 1 dim: 3 dim: 96 dim: 96 }\n') # TODO
+  txt_file.write('    shape: { dim: 1 dim: 3 dim: %d dim: %d }\n'%(int(data_shape[0]),int(data_shape[1]))) # TODO
   txt_file.write('  }\n')
   txt_file.write('}\n')
   txt_file.write('\n')
@@ -174,7 +174,7 @@ def Pooling(txt_file, info):
     if info[attrstr].has_key('pad'):
       txt_file.write('    pad: %s\n'          % info[attrstr]['pad'].split('(')[1].split(',')[0])
     else:
-      txt_file.write('    pad: 1\n')
+      txt_file.write('    pad: 0\n')
 
   txt_file.write('  }\n')
   txt_file.write('}\n')
@@ -273,11 +273,11 @@ def BroadCast_Mul(txt_file,info):
 
 
 # ----------------------------------------------------------------
-def write_node(txt_file, info):
+def write_node(txt_file, info,data_shape):
     if 'label' in info['name']:
         return        
     if info['op'] == 'null' and info['name'] == 'data':
-        data(txt_file, info)
+        data(txt_file, info,data_shape)
     elif info['op'] == 'Convolution':
         Convolution(txt_file, info)
     elif info['op'] == 'ChannelwiseConvolution':

@@ -2,13 +2,24 @@ import sys, argparse
 import find_mxnet, find_caffe
 import mxnet as mx
 import caffe
+from json2prototxt import json2prototxt
+import easydict
 
 parser = argparse.ArgumentParser(description='Convert MXNet model to Caffe model')
 parser.add_argument('--mx-model',    type=str, default='../model-r50-am-lfw/model')
 parser.add_argument('--mx-epoch',    type=int, default=0)
 parser.add_argument('--cf-prototxt', type=str, default='../model-r50-am-lfw/model.prototxt')
-parser.add_argument('--cf-model',    type=str, default='../model-r50-am-lfw/model.caffemodel')
+parser.add_argument('--data-shape', type=int,nargs=2, default=[96,96])
 args = parser.parse_args()
+args.cf_model=args.cf_prototxt.replace(".prototxt",".caffemodel")
+print args.data_shape
+
+json2prototxt_args=easydict.EasyDict()
+json2prototxt_args.mx_json=args.mx_model+"-symbol.json"
+json2prototxt_args.cf_prototxt=args.cf_prototxt
+json2prototxt_args.data_shape=args.data_shape
+
+json2prototxt(json2prototxt_args)
 
 # ------------------------------------------
 # Load
@@ -122,6 +133,7 @@ for i_key,key_i in enumerate(all_keys):
     except KeyError:
       print("\nError!  key error mxnet:{}".format(key_i))
       pass
+    pass
       
 # ------------------------------------------
 # Finish
