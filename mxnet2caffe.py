@@ -1,6 +1,8 @@
 import sys, argparse
-import find_mxnet, find_caffe
+import find_caffe
+print "start import mxnet"
 import mxnet as mx
+print "end import mxnet"
 import caffe
 
 parser = argparse.ArgumentParser(description='Convert MXNet model to Caffe model')
@@ -13,7 +15,7 @@ args = parser.parse_args()
 # ------------------------------------------
 # Load
 _, arg_params, aux_params = mx.model.load_checkpoint(args.mx_model, args.mx_epoch)
-net = caffe.Net(args.cf_prototxt, caffe.TRAIN)
+net = caffe.Net(args.cf_prototxt, caffe.TEST)
 
 # ------------------------------------------
 # Convert
