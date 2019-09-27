@@ -7,7 +7,7 @@ def parser_args():
   parser = argparse.ArgumentParser(description='Convert MXNet jason to Caffe prototxt')
   parser.add_argument('--mx-json',     type=str, default='../model-r50-am-lfw/model-symbol.modified.json')
   parser.add_argument('--cf-prototxt', type=str, default='../model-r50-am-lfw/model.prototxt')
-  parser.add_argument('--data-shape', type=int,nargs=2, default=[96,96])
+  parser.add_argument('--data-shape', type=int,nargs=3, default=[3,96,96])
 
   return parser.parse_args()
 

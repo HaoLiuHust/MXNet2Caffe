@@ -9,7 +9,7 @@ parser = argparse.ArgumentParser(description='Convert MXNet model to Caffe model
 parser.add_argument('--mx-model',    type=str, default='../model-r50-am-lfw/model')
 parser.add_argument('--mx-epoch',    type=int, default=0)
 parser.add_argument('--cf-prototxt', type=str, default='../model-r50-am-lfw/model.prototxt')
-parser.add_argument('--data-shape', type=int,nargs=2, default=[96,96])
+parser.add_argument('--data-shape', type=int,nargs=3, default=[3,96,96])
 args = parser.parse_args()
 args.cf_model=args.cf_prototxt.replace(".prototxt",".caffemodel")
 print args.data_shape
@@ -94,7 +94,7 @@ for i_key,key_i in enumerate(all_keys):
         key_caffe = key_i.replace('_weight', '_fwd')
         net.params[key_caffe][0].data.flat = arg_params[key_i].asnumpy().flat
       elif '_bias' in key_i:
-        key_caffe = key_i.replace('_bias', '')
+        key_caffe = key_i.replace('_bias', '_fwd')
         net.params[key_caffe][1].data.flat = arg_params[key_i].asnumpy().flat
       elif '_gamma' in key_i and 'relu' not in key_i:
         key_caffe = key_i.replace('_gamma', '_fwd_scale')

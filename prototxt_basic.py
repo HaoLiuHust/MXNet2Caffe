@@ -11,7 +11,7 @@ def data(txt_file, info,data_shape):
   txt_file.write('  type: "Input"\n')
   txt_file.write('  top: "data"\n')
   txt_file.write('  input_param {\n')
-  txt_file.write('    shape: { dim: 1 dim: 3 dim: %d dim: %d }\n'%(int(data_shape[0]),int(data_shape[1]))) # TODO
+  txt_file.write('    shape: { dim: 1 dim: %d dim: %d dim: %d }\n'%(int(data_shape[0]),int(data_shape[1]),int(data_shape[2]))) # TODO
   txt_file.write('  }\n')
   txt_file.write('}\n')
   txt_file.write('\n')
@@ -56,7 +56,43 @@ def Convolution(txt_file, info):
     txt_file.write('	  name: "%s"\n'     % info['params'][0])
     txt_file.write('	}\n')
   txt_file.write('}\n')
-  txt_file.write('\n')  
+  txt_file.write('\n')
+
+def DeConvolution(txt_file, info):
+  #if info['attrs']['no_bias'] == 'True':
+    #bias_term = 'false'
+  #else:
+    #bias_term = 'true'  
+  #if info['top'] == 'conv1_1':
+    #pprint.pprint(info)  
+  if fuzzy_haskey(info['params'], 'bias'):
+    bias_term = 'true'  
+  elif info[attrstr].has_key('no_bias') and info['attrs']['no_bias'] == 'True':
+    bias_term = 'false'  
+  else:
+    bias_term = 'true'
+  txt_file.write('layer {\n')
+  txt_file.write('	bottom: "%s"\n'       % info['bottom'][0])
+  txt_file.write('	top: "%s"\n'          % info['top'])
+  txt_file.write('	name: "%s"\n'         % info['top'])
+  txt_file.write('	type: "Deconvolution"\n')
+  txt_file.write('	convolution_param {\n')
+  txt_file.write('		num_output: %s\n'   % info[attrstr]['num_filter'])
+  txt_file.write('		kernel_size: %s\n'  % info[attrstr]['kernel'].split('(')[1].split(',')[0]) # TODO
+  if info[attrstr].has_key('pad'):
+    txt_file.write('		pad: %s\n'          % info[attrstr]['pad'].split('(')[1].split(',')[0]) # TODO
+  if info[attrstr].has_key('num_group'):
+    txt_file.write('		group: %s\n'        % info[attrstr]['num_group'])
+  if info[attrstr].has_key('stride'):
+    txt_file.write('		stride: %s\n'       % info[attrstr]['stride'].split('(')[1].split(',')[0])
+  txt_file.write('		bias_term: %s\n'    % bias_term)
+  txt_file.write('	}\n')
+  if 'share' in info.keys() and info['share']:  
+    txt_file.write('	param {\n')
+    txt_file.write('	  name: "%s"\n'     % info['params'][0])
+    txt_file.write('	}\n')
+  txt_file.write('}\n')
+  txt_file.write('\n')        
 
 def ChannelwiseConvolution(txt_file, info):
   Convolution(txt_file, info)
@@ -280,6 +316,8 @@ def write_node(txt_file, info,data_shape):
         data(txt_file, info,data_shape)
     elif info['op'] == 'Convolution':
         Convolution(txt_file, info)
+    elif info['op'] == 'Deconvolution':
+        DeConvolution(txt_file, info)
     elif info['op'] == 'ChannelwiseConvolution':
         ChannelwiseConvolution(txt_file, info)
     elif info['op'] == 'BatchNorm':

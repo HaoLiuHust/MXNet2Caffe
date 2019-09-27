@@ -6,16 +6,16 @@ import math
 import cv2
 import os, sys
 curr_path = os.path.abspath(os.path.dirname(__file__))
-sys.path.append("/home/liuhao/software/frameworks/nvcaffe/build/install/python")
+sys.path.append("/home/liuhao/software/frameworks/caffe/build/install/python/")
 import caffe
 
 caffe.set_mode_cpu()
-net_file = '/home/liuhao/samba/96/CLionProjects/ModelServing/servings/model/gender_enhanced_bgr.prototxt'
+net_file = '/home/liuhao/Projects/Projects/MXNet2Caffe/aiot/yinyang_rgb_20190916.prototxt'
 net_model = net_file.replace(".prototxt",".caffemodel")
 
 net_caffe = caffe.Net(net_file,net_model,caffe.TEST)
 
-sym,arg_params,aux_params=mx.model.load_checkpoint("/home/liuhao/store/liuhao/work/aiot/new_gender/0914Lib",19)
+sym,arg_params,aux_params=mx.model.load_checkpoint("/home/liuhao/store/liuhao/work/aiot/yinyang/yingyang_light_ssh_68/yinyang_light",2)
 data_shape=[('data',[1,3,96,96])]
 
 # #all layer_name
@@ -37,6 +37,7 @@ mod.bind(data_shape,label_shapes=None,for_training=False)
 mod.set_params(arg_params,aux_params,allow_missing=True)
 
 mean_pixels = (127.5, 127.5, 127.5)
+std_pixel=127.5
 
 def adjust_data(img,data_shape):
     #batch_data = np.zeros((1, 3, data_shape, data_shape))
@@ -46,6 +47,7 @@ def adjust_data(img,data_shape):
     data = np.transpose(data, (2, 0, 1))
     data = data.astype('float32')
     _data = data - _mean_pixels
+    _data/=127.5
     return _data
 
 def adjust_data_G(img,data_shape):
@@ -56,14 +58,16 @@ def adjust_data_G(img,data_shape):
     data = mx.nd.transpose(data, (2,0,1))
     data = data.astype('float32')
     _data = data - _mean_pixels
+    _data /= 127.5
     batch_data[0] = _data
     test_iter = mx.nd.array(batch_data)
     return test_iter
 
-img_dir="/home/liuhao/samba/96/CLionProjects/ModelServing/cmake-build-debug/bin/age/"
+img_dir="/home/liuhao/samba/96/CLionProjects/ModelServing/cmake-build-debug/bin/"
 img_lst=os.listdir(img_dir)
 img_lst.sort()
 for img_name in img_lst:
+    print img_name
     img=cv2.imread(os.path.join(img_dir,img_name))
     if img is None:
         continue
@@ -84,5 +88,5 @@ for img_name in img_lst:
     caffe_img=adjust_data(img_c,data_shape_G)
     net_caffe.blobs['data'].data[...] = caffe_img
     output = net_caffe.forward()
-    gender=output['softmax1'][0]
+    # gender=output['softmax1'][0]
     print "caffe age"

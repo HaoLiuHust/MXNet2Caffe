@@ -8,8 +8,11 @@ import caffe
 from caffe.proto import caffe_pb2
 from google.protobuf import text_format
 
-src_model = '/home/liuhao/Projects/Projects/MXNet2Caffe/Resnet124_4_512_112x112_20190419_lijixiao_13_bgr.prototxt'
-dst_model = '/home/liuhao/Projects/Projects/MXNet2Caffe/Resnet124_4_512_112x112_20190419_lijixiao_13_bgr_inplace.prototxt'
+src_model = '/home/liuhao/Projects/Projects/MXNet2Caffe/models/Resnet124_4_512_112x112_20190419_lijixiao_13.prototxt'
+dst_model = '/home/liuhao/Projects/Projects/MXNet2Caffe/models/Resnet124_4_512_112x112_20190419_lijixiao_13_inplace.prototxt'
+
+src_model=sys.argv[1]
+dst_model=sys.argv[2]
 
 '''
  Set all BatchNorm and Scale ReLU as inplace op
