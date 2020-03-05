@@ -3,3 +3,4 @@
 3. 如果想两步合一：mxnet2caffe_all_in_one.py，如果有不支持的层就不能2步合一了  
 4. 如果需要调整输入顺序：caffe_swap_channel_toolkit.py  
 5. 如果需要inplace操作：inplace_conv_block.py, 注意转换后可能需要手动微调
+6. insert_mean_scale.py, 将均值和方差用Scale层的形式写入模型文件
