@@ -265,7 +265,16 @@ def LeakyReLU(txt_file, info):
     txt_file.write('  name: "%s"\n'       % info['top'])
     txt_file.write('  type: "PReLU"\n')
     txt_file.write('}\n')
-    txt_file.write('\n')      
+    txt_file.write('\n')
+  elif info[attrstr]['act_type'] == 'leaky':
+    txt_file.write('layer {\n')
+    txt_file.write('  bottom: "%s"\n'     % info['bottom'][0])
+    txt_file.write('  top: "%s"\n'        % info['top'])
+    txt_file.write('  name: "%s"\n'       % info['top'])
+    txt_file.write('  type: "ReLU"\n')
+    txt_file.write('  relu_param: {negative_slope: 0.25}\n')
+    txt_file.write('}\n')
+    txt_file.write('\n')
   else:
     raise Exception("unsupported Activation")
 
