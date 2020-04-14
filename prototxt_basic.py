@@ -319,6 +319,7 @@ def BroadCast_Mul(txt_file,info):
 
 # ----------------------------------------------------------------
 def write_node(txt_file, info,data_shape):
+    supported=True
     if 'label' in info['name']:
         return        
     if info['op'] == 'null' and info['name'] == 'data':
@@ -355,14 +356,17 @@ def write_node(txt_file, info,data_shape):
         Sigmod(txt_file, info)
     elif info['op'] == 'broadcast_mul':
         BroadCast_Mul(txt_file,info)
-    elif info['op'] == 'Dropout':
-        Dropout(txt_file,info)
+    # elif info['op'] == 'Dropout':
+    #     Dropout(txt_file,info)
     elif info['op'] == 'LinearRegressionOutput':
         LinearRegression(txt_file,info)
     else:
+        supported= False
         #pprint.pprint(info)
         #sys.exit("Warning!  Unknown mxnet op:{}".format(info['op']))
         print("Warning! Skip Unknown mxnet op:{}".format(info['op']))
+
+    return supported
 
 
 
